@@ -17,7 +17,12 @@ const options = {
       turboThreshold: 0,
       data: [[1, 2][(3, 4)]]
     }
-  ]
+  ],
+  tooltip: {
+    valueDecimals: 2,
+    valuePrefix: '$',
+    valueSuffix: ' USD'
+  }
 };
 
 class StockGraph extends Component {
@@ -46,6 +51,7 @@ class StockGraph extends Component {
 
   getData() {
     const symbol = this.state.stock.toUpperCase();
+    let retry = false;
     
     try {
       console.log(symbol);
@@ -58,6 +64,7 @@ class StockGraph extends Component {
       )
         .then(res => res.json())
         .then(json => {
+          retry = (json.date === null) ? true : false;
           if (json.date) {
             console.log(json);
             const date = json.epoch;
@@ -73,6 +80,10 @@ class StockGraph extends Component {
         });
     } catch (error) {
       console.log(error);
+    }
+    if (retry === true) {
+      console.log("null data - retry");
+      this.getData()
     }
   }
 
