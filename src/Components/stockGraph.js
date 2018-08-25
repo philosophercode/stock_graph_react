@@ -7,22 +7,59 @@ import Button from "@material-ui/core/Button";
 
 import "./stocks.css";
 
+// const options = {
+//   title: {
+//     text: "My stock chart"
+//   },
+//   series: [
+//     {
+//       name: "stock",
+//       turboThreshold: 0,
+//       data: [[1, 2][3, 4]]
+//     }
+//   ],
+//   tooltip: {
+//     valueDecimals: 2,
+//     valuePrefix: "$",
+//     valueSuffix: " USD"
+//   }
+// };
+
 const options = {
   title: {
-    text: "My stock chart"
+    text: "AAPL stock price by minute"
   },
+
+  rangeSelector: {
+    selected: 1,
+    inputEnabled: true
+  },
+
+  exporting: {
+    enabled: true,
+    buttons: {
+        contextButton: {
+            text: 'Export',
+            symbolFill: '#f88',
+            symbolStroke: '#f00',
+            enabled: true
+        }
+    }
+  },
+
   series: [
     {
       name: "stock",
-      turboThreshold: 0,
-      data: [[1, 2][(3, 4)]]
+      // turboThreshold: 0,
+      type: "candlestick",
+      data: [0,0,0,0,0],
+      tooltip: {
+        valueDecimals: 2,
+        valuePrefix: "$",
+        valueSuffix: " USD"
+      }
     }
-  ],
-  tooltip: {
-    valueDecimals: 2,
-    valuePrefix: '$',
-    valueSuffix: ' USD'
-  }
+  ]
 };
 
 class StockGraph extends Component {
@@ -52,7 +89,7 @@ class StockGraph extends Component {
   getData() {
     const symbol = this.state.stock.toUpperCase();
     let retry = false;
-    
+
     try {
       console.log(symbol);
       fetch(
@@ -64,17 +101,27 @@ class StockGraph extends Component {
       )
         .then(res => res.json())
         .then(json => {
-          retry = (json.date === null) ? true : false;
+          retry = json.date === null ? true : false;
           if (json.date) {
             console.log(json);
             const date = json.epoch;
-            const open = json.open;
-            const data = date.map((day, idx) => [day, open[idx]]);
+            const openPrice = json.open;
+            const highPrice = json.high;
+            const lowPrice = json.low;
+            const closePrice = json.close;
+            const data = date.map((day, idx) => [
+              day,
+              openPrice[idx],
+              highPrice[idx],
+              lowPrice[idx],
+              closePrice[idx]
+            ]);
             this.setState({ data: data });
             console.log(data);
             options.series[0].data = data;
             options.series[0].name = this.state.stock.toUpperCase();
-            options.title.text = this.state.stock.toUpperCase() + " Stock Chart by Open Price";
+            options.title.text =
+              this.state.stock.toUpperCase() + " Stock Chart by Open Price";
             this.setState({ options: options });
           }
         });
@@ -83,12 +130,11 @@ class StockGraph extends Component {
     }
     if (retry === true) {
       console.log("null data - retry");
-      this.getData()
+      this.getData();
     }
   }
 
   render() {
-    
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
