@@ -14,15 +14,16 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Grid container spacing={16}>
-          <Grid item xs={1}>
-          </Grid>
-          <Grid item xs={8}>
+        <Grid
+          container
+          spacing={16}
+          direction="row"
+          justify="center"
+          alignItems="center">
+          <Grid item xs={10}>
             <Paper className="paper">
               <StockGraph />
             </Paper>
-            <Grid item xs={1}>
-            </Grid>
           </Grid>
         </Grid>
 
