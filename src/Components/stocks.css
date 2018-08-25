@@ -1,0 +1,13 @@
+.paper {
+    /* height: 200px; */
+    width: 100%;
+}
+
+.highcharts-credits {
+    visibility: hidden;
+}
+
+#stock-button {
+    margin-left: 15px;
+    margin-bottom: 5px;
+}
