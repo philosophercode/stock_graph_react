@@ -27,23 +27,72 @@ import "./stocks.css";
 
 const options = {
   title: {
-    text: "AAPL stock price by minute"
+    text: "Stock Price by Day"
   },
 
+  // rangeSelector: {
+  //   selected: 1,
+  //   inputEnabled: true
+  // },
   rangeSelector: {
-    selected: 1,
-    inputEnabled: true
+    allButtonsEnabled: true,
+    buttons: [
+      {
+        type: "month",
+        count: 1,
+        text: "1m"
+      },
+      {
+        type: "month",
+        count: 3,
+        text: "3m"
+      },
+      {
+        type: "month",
+        count: 6,
+        text: "6m"
+      },
+      {
+        type: "ytd",
+        count: 1,
+        text: "YTD"
+      },
+      {
+        type: "year",
+        count: 1,
+        text: "1y"
+      },
+      {
+        type: "year",
+        count: 3,
+        text: "3y"
+      },
+      {
+        type: "year",
+        count: 5,
+        text: "5y"
+      },
+      {
+        type: "all",
+        count: 1,
+        text: "All"
+      }
+    ],
+    buttonTheme: {
+      width: 30
+    },
+    selected: 2
   },
 
   exporting: {
     enabled: true,
     buttons: {
-        contextButton: {
-            text: 'Export',
-            symbolFill: '#f88',
-            symbolStroke: '#f00',
-            enabled: true
-        }
+      contextButton: {
+        text: "Export",
+        symbolFill: "#f88",
+        symbolStroke: "#f00",
+        enabled: true
+      }
     }
   },
 
@@ -52,7 +101,7 @@ const options = {
       name: "stock",
       // turboThreshold: 0,
       type: "candlestick",
-      data: [0,0,0,0,0],
+      data: [0, 0, 0, 0, 0],
       tooltip: {
         valueDecimals: 2,
         valuePrefix: "$",
@@ -121,7 +170,7 @@ class StockGraph extends Component {
             options.series[0].data = data;
             options.series[0].name = this.state.stock.toUpperCase();
             options.title.text =
-              this.state.stock.toUpperCase() + " Stock Chart by Open Price";
+              this.state.stock.toUpperCase() + " Stock Price by Day";
             this.setState({ options: options });
           }
         });
@@ -139,8 +188,8 @@ class StockGraph extends Component {
       <div>
         <form onSubmit={this.handleSubmit}>
           <TextField
-            id="name"
-            label="Name"
+            id="symbol"
+            label="Symbol"
             value={this.state.stock}
             onChange={this.handleChange}
             margin="normal"
