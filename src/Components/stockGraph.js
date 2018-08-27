@@ -157,17 +157,6 @@ const options = {
 
   series: [
     {
-      name: "stock",
-      turboThreshold: 0,
-      type: "candlestick",
-      data: [0, 1, 2, 1, 0],
-      tooltip: {
-        valueDecimals: 2,
-        valuePrefix: "$",
-        valueSuffix: " USD"
-      }
-    },
-    {
       // valueDecimals: 2,
       turboThreshold: 0,
       type: "column",
@@ -177,6 +166,17 @@ const options = {
         // pointFormat: "Vol: {point.y:.2f}^10m",
         valueDecimals: 2,
         valueSuffix: "^10m"
+      }
+    },
+    {
+      name: "stock",
+      turboThreshold: 0,
+      type: "candlestick",
+      data: [0, 1, 2, 1, 0],
+      tooltip: {
+        valueDecimals: 2,
+        valuePrefix: "$",
+        valueSuffix: " USD"
       }
     }
   ]
@@ -256,9 +256,9 @@ class StockGraph extends Component {
             });
             console.log(data);
             if (!compare) {
-              options.series[0].data = data;
-              options.series[1].data = dataVolume;
-              options.series[0].name = this.state.stock.toUpperCase();
+              options.series[1].data = data;
+              options.series[0].data = dataVolume;
+              options.series[1].name = this.state.stock.toUpperCase();
               options.title.text =
                 this.state.stock.toUpperCase() + " Stock Price+Volume by Day";
             }
