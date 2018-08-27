@@ -7,6 +7,12 @@ import Button from "@material-ui/core/Button";
 
 import "./stocks.css";
 
+import HighchartsExporting from "highcharts/modules/exporting";
+import "highcharts/modules/export-data";
+// import HighchartsOfflineExporting from "highcharts/modules/offline-exporting";
+
+HighchartsExporting(Highcharts);
+// HighchartsOfflineExporting(Highcharts)
 // const options = {
 //   title: {
 //     text: "My stock chart"
@@ -29,7 +35,6 @@ const options = {
   title: {
     text: "Stock Price+Volume by Day"
   },
-
   // rangeSelector: {
   //   selected: 1,
   //   inputEnabled: true
@@ -84,17 +89,22 @@ const options = {
     selected: 2
   },
 
-  exporting: {
-    enabled: true,
-    buttons: {
-      contextButton: {
-        text: "Export",
-        symbolFill: "#f88",
-        symbolStroke: "#f00",
-        enabled: true
-      }
-    }
+  credits: {
+    enabled: false
   },
+
+  // exporting: {
+  //   chartOptions: { // specific options for the exported image
+  //       plotOptions: {
+  //           series: {
+  //               dataLabels: {
+  //                   enabled: true
+  //               }
+  //           }
+  //       }
+  //   },
+  //   fallbackToExportServer: false
+  // },
 
   // navigator: {
   //   xAxis: {
@@ -115,7 +125,20 @@ const options = {
   //     }
   //   }
   // },
-
+  // exporting: {
+  //   chartOptions: {
+  //     // specific options for the exported image
+  //     plotOptions: {
+  //       series: {
+  //         dataLabels: {
+  //           enabled: true
+  //         }
+  //       }
+  //     }
+  //   },
+  //   scale: 2,
+  //   fallbackToExportServer: false
+  // },
   plotOptions: {
     series: {
       dataLabels: {
@@ -123,7 +146,8 @@ const options = {
       },
       marker: {
         lineColor: "#333"
-      }
+      },
+      pointStart: Date.now()
     },
     candlestick: {
       color: "#f08080",
@@ -225,7 +249,7 @@ class StockGraph extends Component {
             ]);
             const dataVolume = date.map((day, idx) => [
               day,
-              parseFloat(((volumeDay[idx]) /10000000))
+              parseFloat(volumeDay[idx] / 10000000)
             ]);
             this.setState({
               data: data
