@@ -27,7 +27,7 @@ import "./stocks.css";
 
 const options = {
   title: {
-    text: "Stock Price by Day"
+    text: "Stock Price+Volume by Day"
   },
 
   // rangeSelector: {
@@ -96,16 +96,63 @@ const options = {
     }
   },
 
+  // navigator: {
+  //   xAxis: {
+  //       isInternal: false
+  //     },
+  //   yAxis: {
+  //       isInternal: false
+  //     }
+  // },
+
+  // plotOptions: {
+  //   series: {
+  //     compare: "percent"
+  //   },
+  //   states: {
+  //     hover: {
+  //       enabled: true
+  //     }
+  //   }
+  // },
+
+  plotOptions: {
+    series: {
+      dataLabels: {
+        color: "#B0B0B3"
+      },
+      marker: {
+        lineColor: "#333"
+      }
+    },
+    candlestick: {
+      color: "#f08080",
+      upColor: "#98fb98"
+    }
+  },
+
   series: [
     {
       name: "stock",
-      // turboThreshold: 0,
+      turboThreshold: 0,
       type: "candlestick",
-      data: [0, 0, 0, 0, 0],
+      data: [0, 1, 2, 1, 0],
       tooltip: {
         valueDecimals: 2,
         valuePrefix: "$",
         valueSuffix: " USD"
+      }
+    },
+    {
+      // valueDecimals: 2,
+      turboThreshold: 0,
+      type: "column",
+      name: "Volume",
+      data: [0, 0],
+      tooltip: {
+        // pointFormat: "Vol: {point.y:.2f}^10m",
+        valueDecimals: 2,
+        valueSuffix: "^10m"
       }
     }
   ]
@@ -121,12 +168,15 @@ class StockGraph extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCompare = this.handleCompare.bind(this);
     this.getData = this.getData.bind(this);
     this.getData();
   }
 
   handleChange(e) {
-    this.setState({ stock: e.target.value });
+    this.setState({
+      stock: e.target.value
+    });
     e.preventDefault();
   }
 
@@ -135,7 +185,12 @@ class StockGraph extends Component {
     e.preventDefault();
   }
 
-  getData() {
+  handleCompare(e) {
+    this.getData(true);
+    e.preventDefault();
+  }
+
+  getData(compare = false) {
     const symbol = this.state.stock.toUpperCase();
     let retry = false;
 
@@ -145,7 +200,9 @@ class StockGraph extends Component {
         "https://shr0gyhr34.execute-api.us-east-1.amazonaws.com/default/api_finance",
         {
           method: "POST",
-          body: JSON.stringify({ stock: symbol })
+          body: JSON.stringify({
+            stock: symbol
+          })
         }
       )
         .then(res => res.json())
@@ -158,6 +215,7 @@ class StockGraph extends Component {
             const highPrice = json.high;
             const lowPrice = json.low;
             const closePrice = json.close;
+            const volumeDay = json.volume;
             const data = date.map((day, idx) => [
               day,
               openPrice[idx],
@@ -165,13 +223,32 @@ class StockGraph extends Component {
               lowPrice[idx],
               closePrice[idx]
             ]);
-            this.setState({ data: data });
+            const dataVolume = date.map((day, idx) => [
+              day,
+              parseFloat(((volumeDay[idx]) /10000000))
+            ]);
+            this.setState({
+              data: data
+            });
             console.log(data);
-            options.series[0].data = data;
-            options.series[0].name = this.state.stock.toUpperCase();
-            options.title.text =
-              this.state.stock.toUpperCase() + " Stock Price by Day";
-            this.setState({ options: options });
+            if (!compare) {
+              options.series[0].data = data;
+              options.series[1].data = dataVolume;
+              options.series[0].name = this.state.stock.toUpperCase();
+              options.title.text =
+                this.state.stock.toUpperCase() + " Stock Price+Volume by Day";
+            }
+            // else {
+            //   const endArrIdx = options.series.length;
+            //   options.series.push({
+            //     data: data
+            //   });
+            //   options.series[endArrIdx].name = this.state.stock.toUpperCase();
+            //   options.title.text = "Stock Price by Day";
+            // }
+            this.setState({
+              options: options
+            });
           }
         });
     } catch (error) {
@@ -204,6 +281,16 @@ class StockGraph extends Component {
           >
             STOCK
           </Button>
+          {/* <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            value="Submit"
+            onClick={this.handleCompare}
+            id="stock-button"
+          >
+            +
+          </Button> */}
         </form>
         <HighchartsReact
           highcharts={Highcharts}

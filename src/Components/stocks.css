@@ -11,3 +11,11 @@
     margin-left: 15px;
     margin-bottom: 5px;
 }
+
+.highcharts-graph{
+    stroke: lightblue;
+}
+
+.highcharts-area{
+    fill: rgba(173, 216, 230, 0.2);
+}
